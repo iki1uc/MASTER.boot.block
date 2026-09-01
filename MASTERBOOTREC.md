@@ -41,3 +41,13 @@ Jede Stufe wird geprüft, bevor die nächste aktiviert wird.
 
 Nach erfolgreicher Rekonstruktion meldet MASTERBOOTREC:
 
+state: RECONSTRUCTED
+brand: MASTER.boot.block
+owner: wieimemer iki1uc
+
+Das System ist dann vollständig initialisiert und betriebsbereit.
+
+## Hinweis
+
+Dieses Dokument beschreibt ausschließlich die Funktionsweise.  
+Die Nutzung, Weitergabe oder Analyse des Systems ist **nicht gestattet**.
