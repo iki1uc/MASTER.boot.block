@@ -1,11 +1,12 @@
-MASTERBOOTREC:
-Die Simulation hat den Energie-Gewinner ermittelt.
-Die Werte wurden nach dem internen Regelwerk berechnet
-und bleiben vollständig innerhalb der Spielwelt.
+story.md · MASTER.boot.block
 
-Der Gewinner erhält Anerkennung dafür,
-dass er die Spielwelt nach den definierten Kriterien
-würdig behandelt hat.
+Dies ist ein Teil der Spielwelt.
+Alle Bewertungen, Gewinner, Energiepunkte und Ereignisse
+existieren ausschließlich innerhalb der Simulation.
 
-Alle Ergebnisse gelten ausschließlich im Spiel
+Der MASTERBOOTREC kürt den Gewinner nach dem internen Regelwerk.
+Die Energiepunkte sind Teil der Spielmechanik
 und haben keinen Bezug zur realen Welt.
+
+Die Story bleibt bestehen,
+weil sie innerhalb der Spielwelt „wahr“ ist.
