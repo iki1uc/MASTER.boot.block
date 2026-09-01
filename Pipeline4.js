@@ -1,44 +1,38 @@
-// Pipeline4.js
-// NC‑WORK Build‑Generator (aktive Pipeline)
+3 ↗ 9 ↘ ◎ ↗ ↘ 3 9 ↘ ↗ ◎ ↗ ↘ 81 ◆ …
 
-import { AxiomVectorMap } from "../axiom.map.js";
+cycle() {
 
-export const Pipeline4 = {
-
-    id: 4,
-    type: "build-generator",
-    mode: "active",
-
-    // NC‑Build‑Stufen
-    build: [0, 1, 2],
-
-    // Auto‑Start aktiv
-    autostart: true,
-
-    // RAM‑Tiefe für Pipeline 4
-    ram: "ram3.ready",
-
-    // HDF‑Bindung (D = North)
-    hdf: "d.hdf.rom",
-
-    // Axiom‑Routing
-    axiom: AxiomVectorMap["N"],
-
-    // NC‑Work‑Init
-    init() {
-        return {
-            build: this.build,
-            autostart: this.autostart,
-            ram: this.ram,
-            hdf: this.hdf,
-            axiom: this.axiom
-        };
-    },
-
-    // Pipeline‑Start
-    start() {
-        const ctx = this.init();
-        console.log("Pipeline 4 gestartet:", ctx);
-        return ctx;
+    // 3-MODUS
+    if (Runtime.mode === 3) {
+        Pipeline4.start();
+        Pipeline3.generate(Pipeline4.build);
+        Runtime.mode = "◎";
     }
-};
+
+    // NEUTRALRAUM
+    else if (Runtime.mode === "◎") {
+        Runtime.mode = 9;
+    }
+
+    // 9-MODUS
+    else if (Runtime.mode === 9) {
+        Pipeline2.generate();
+        Runtime.mode = "△";
+    }
+
+    // ÜBERGANG
+    else if (Runtime.mode === "△") {
+        Runtime.mode = 81;
+    }
+
+    // 81-MODUS
+    else if (Runtime.mode === 81) {
+        Pipeline9.ees || Pipeline12.ees;
+        Runtime.mode = "27";
+    }
+
+    // ZWISCHENRAUM
+    else if (Runtime.mode === "27") {
+        Runtime.mode = 3;
+    }
+}
