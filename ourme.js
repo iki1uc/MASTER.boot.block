@@ -1,76 +1,40 @@
-// ============================================================
-// ourme.js · Schabanak Router Kernel
-// Entwickler: iki1uc
-// ============================================================
+DOO → DOOR → TRANS → WARB → KANAL → API
+↓
+▣ → 3 ↗ 9 ↘ ◎ ↗ ↘ 81 ◆ → △ → 27 → 3 ↺
 
-// ------------------------------------------------------------
-// 1. Achsen (LAXIO = links/negativ, RAXIO = rechts/positiv)
-// ------------------------------------------------------------
-const AXIS = {
-    LAXIO: -1,
-    RAXIO: +1
-};
+USER
+↓
+DOO.activate()
+↓
+DOOR.openDoor()
+↓
+DOOR.trans()
+↓
+DOOR.warb()
+↓
+DOOR.kanal()
+↓
+DOOR.api()
+↓
+routeInteraction(axis, move)
+↓
+▣ → 3 ↗ 9 ↘ ◎ ↗ ↘ 81 ◆ → △ → 27 → 3 ↺
+import { AXIS, MOVES, routeInteraction } from './ourme.js';
+import DOOR_DOO from './door-doo-bridge.js';
 
-// ------------------------------------------------------------
-// 2. AIR & AIV · Mess-Inseln
-// ------------------------------------------------------------
-const ISLAND = {
-    AIR: 0,     // neutrales Zentrum
-    AIV: -0     // invertiertes Zentrum (axiomisch)
-};
+export function USER_START(axis, move, payload) {
+    // USER setzt Achse & Bewegung
+    const interaction = routeInteraction(axis, move);
 
-// ------------------------------------------------------------
-// 3. Bewegungsachsen (OI / IO / XI / IX)
-// ------------------------------------------------------------
-const MOVES = {
-    OI:  "OUT→IN",      // Kompression
-    IO:  "IN→OUT",      // Expansion
-    XI:  "CROSS→IN",    // diagonale Faltung
-    IX:  "IN→CROSS"     // diagonale Entfaltung
-};
+    // Vor-Orbit starten
+    const preOrbit = DOOR_DOO.fullPipeline();
 
-// ------------------------------------------------------------
-// 4. NOAH · High-End Modul
-// ------------------------------------------------------------
-const NOAH = {
-    state: "READY",
-    mode: "HIGH-END",
-    brand: "NOAH.iki1uc"
-};
-
-// ------------------------------------------------------------
-// 5. Rolle-Sync (Work-Ebene)
-// ------------------------------------------------------------
-function syncRolle() {
+    // Übergang in den goldenen 6-Orbit
     return {
-        module: "rolle",
-        status: "SYNC_OK",
-        brand: "VECTOR / EARN / LIVE.team"
+        user: { axis, move, payload },
+        preOrbit,
+        interaction,
+        orbit: "▣ → 3 ↗ 9 ↘ ◎ ↗ ↘ 81 ◆ → △ → 27 → 3 ↺",
+        state: "GOLDENE_6_READY"
     };
 }
-
-// ------------------------------------------------------------
-// 6. Router-Interaktion
-// ------------------------------------------------------------
-function routeInteraction(axis, move) {
-    return {
-        axis,
-        move,
-        islandAIR: ISLAND.AIR,
-        islandAIV: ISLAND.AIV,
-        noah: NOAH.state,
-        rolle: syncRolle(),
-        brand: "wieimmer iki1uc"
-    };
-}
-
-// ------------------------------------------------------------
-// 7. Export
-// ------------------------------------------------------------
-module.exports = {
-    AXIS,
-    MOVES,
-    ISLAND,
-    NOAH,
-    routeInteraction
-};
