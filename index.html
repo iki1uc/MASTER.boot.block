@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>MASTER.boot.block — DEFCON: Atome werden geladen</title>
+    <style>
+        body {
+            background: #0a0a0a;
+            color: #e0e0e0;
+            font-family: monospace;
+            padding: 40px;
+        }
+        .title { font-size: 28px; margin-bottom: 10px; }
+        .subtitle { font-size: 16px; opacity: 0.7; margin-bottom: 30px; }
+        .block { margin-bottom: 40px; }
+        .slider { width: 300px; }
+        .btn { padding: 10px 20px; background: #222; color: #fff; border: 1px solid #555; cursor: pointer; }
+        .btn:hover { background: #333; }
+        .log { margin-top: 20px; white-space: pre; background: #111; padding: 20px; border: 1px solid #333; }
+    </style>
+</head>
+<body>
+
+<div class="title">MASTER.boot.block</div>
+<div class="subtitle">DEFCON: Atome werden geladen…</div>
+
+<div class="block">
+    <h3>USER‑Profil</h3>
+    <pre id="userBox">
+{
+    "name": "Ridvan",
+    "level": 6,
+    "status": "active"
+}
+    </pre>
+</div>
+
+<div class="block">
+    <h3>Regelschieber — Pump‑Energie</h3>
+    <input type="range" min="0" max="100" value="0" class="slider" id="pumpSlider">
+    <div id="pumpValue">pump = 0</div>
+</div>
+
+<div class="block">
+    <h3>Ungewöhnliche Moves</h3>
+    <button class="btn" onclick="move('OI')">OUT→IN</button>
+    <button class="btn" onclick="move('IO')">IN→OUT</button>
+    <button class="btn" onclick="move('XI')">CROSS→IN</button>
+    <button class="btn" onclick="move('IX')">IN→CROSS</button>
+</div>
+
+<div class="block">
+    <h3>Engine starten</h3>
+    <button class="btn" onclick="runEngine()">predictiveEngine()</button>
+</div>
+
+<div class="log" id="logBox">LOG:</div>
+
+<script>
+    // USER
+    const USER = { name: "Ridvan", level: 6, status: "active" };
+
+    // ENGINE
+    const Engine = {
+        state
