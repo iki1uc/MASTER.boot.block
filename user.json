@@ -1,5 +1,65 @@
-{
-    "name": "Ridvan",
-    "level": 6,
-    "status": "active"
-}
+// user.json Input
+const USER = {
+    name: "Ridvan",
+    level: 6,
+    status: "active"
+};
+
+// MASTER.boot.block – Predictive Engine
+export const Engine = {
+    state: {
+        pump: 0,
+        cpuJumpA: 0,   // Formel A
+        cpuJumpB: 0,   // Formel B
+        active: 1
+    },
+
+    memory: {
+        hits: 0,
+        logs: []
+    },
+
+    // USER-Impuls
+    userImpulse() {
+        return USER.level + this.state.active;
+    },
+
+    // Formel A – predictiveEngine
+    predictiveEngine() {
+        const active = this.userImpulse(); // USER wird eingebaut
+        const jumpA = active + Math.floor(this.state.pump / 6);
+
+        this.state.cpuJumpA = jumpA;
+
+        if (jumpA > 0) {
+            this.memory.hits++;
+        }
+
+        this.log(`Formel A: jumpA=${jumpA}, pump=${this.state.pump}`);
+
+        // NICHT überschreiben – nur weiterreichen
+        return this.orbitFusion(jumpA);
+    },
+
+    // Formel B – orbitFusion
+    orbitFusion(jumpA) {
+        const active = this.userImpulse();
+        const jumpB = active + Math.floor(this.state.pump / 8);
+
+        this.state.cpuJumpB = jumpB;
+
+        this.log(`Formel B: jumpB=${jumpB}, fromA=${jumpA}`);
+
+        return {
+            A: jumpA,
+            B: jumpB,
+            user: USER.name,
+            level: USER.level,
+            pump: this.state.pump,
+            hits: this.memory.hits
+        };
+    },
+
+    // Pump erhöhen
+    pumpUp(value = 1) {
+        this.state
