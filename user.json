@@ -1,32 +1,24 @@
-// user.json Input
-const USER = {
-    name: "Ridvan",
-    level: 6,
-    status: "active"
-};
-
-// MASTER.boot.block – Predictive Engine
 export const Engine = {
     state: {
-        pump: 0,
-        cpuJumpA: 0,   // Formel A
-        cpuJumpB: 0,   // Formel B
-        active: 1
+        pump: 0,        // Energie, die sich aufbaut
+        cpuJumpA: 0,    // Formel A – Vorhersage
+        cpuJumpB: 0,    // Formel B – Orbitkorrektur
+        active: 1       // Grundaktivität
     },
 
     memory: {
-        hits: 0,
-        logs: []
+        hits: 0,        // Treffer von Formel A
+        logs: []        // Chronik
     },
 
-    // USER-Impuls
+    // USER-Impuls – der erste Funke
     userImpulse() {
         return USER.level + this.state.active;
     },
 
-    // Formel A – predictiveEngine
+    // Formel A – sieht die Zukunft
     predictiveEngine() {
-        const active = this.userImpulse(); // USER wird eingebaut
+        const active = this.userImpulse();
         const jumpA = active + Math.floor(this.state.pump / 6);
 
         this.state.cpuJumpA = jumpA;
@@ -37,11 +29,11 @@ export const Engine = {
 
         this.log(`Formel A: jumpA=${jumpA}, pump=${this.state.pump}`);
 
-        // NICHT überschreiben – nur weiterreichen
+        // Übergabe an Formel B
         return this.orbitFusion(jumpA);
     },
 
-    // Formel B – orbitFusion
+    // Formel B – korrigiert die Bahn
     orbitFusion(jumpA) {
         const active = this.userImpulse();
         const jumpB = active + Math.floor(this.state.pump / 8);
@@ -60,6 +52,15 @@ export const Engine = {
         };
     },
 
-    // Pump erhöhen
+    // Energie erhöhen
     pumpUp(value = 1) {
-        this.state
+        this.state.pump += value;
+        this.log(`pumpUp: +${value}, pump=${this.state.pump}`);
+    },
+
+    // Chronik
+    log(msg) {
+        this.memory.logs.push(msg);
+        console.log(`[ENGINE] ${msg}`);
+    }
+};
