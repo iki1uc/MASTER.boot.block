@@ -1,58 +1,31 @@
-// ============================================================
-// Axiom Kernel · axiomove.js (Pipeline0)
-// Modus B · funktional · RUN0 → RUN3 · SLI.run Vorbereitung
-// Entwickler: iki1uc
-// ============================================================
+3 ↗ 9 ↘ ◎ ↗ ↘ 3 9 ↘ ↗ ◎ ↗ ↘ 81 ◆
 
-// ------------------------------------------------------------
-// 1. Axiomische Achsen (81 → 9 → 3)
-// ------------------------------------------------------------
-const AXIOM = {
-    full: 81,       // Vollendung
-    expand: 9,      // Erweiterung
-    base: 3         // Grundimpuls
-};
+impulse: AXIOM.expand / AXIOM.base,     // 9 → 3
+expansion: AXIOM.full / AXIOM.expand,   // 81 → 9
+completion: AXIOM.full / AXIOM.base     // 81 → 3
 
-// ------------------------------------------------------------
-// 2. Axiomische Matrix (3×3×3)
-// ------------------------------------------------------------
-function axiomMatrix() {
-    return {
-        layer81: [3,3,3],   // 81 = 3×3×3
-        layer9:  [3,3],     // 9  = 3×3
-        layer3:  [3]        // 3  = 3
-    };
-}
+… ↘ 81 ◆ → 27 → 3 ↺
 
-// ------------------------------------------------------------
-// 3. Axiomische Physik (mathematisch + physikalisch)
-// ------------------------------------------------------------
-function axiomPhysics() {
-    return {
-        impulse: AXIOM.expand / AXIOM.base,     // 9 → 3
-        expansion: AXIOM.full / AXIOM.expand,   // 81 → 9
-        completion: AXIOM.full / AXIOM.base     // 81 → 3
-    };
-}
+AXIOM = { full: 81, expand: 9, base: 3 }
 
-// ------------------------------------------------------------
-// 4. Pipeline0 (axiomove) · RUN0 → RUN1 → RUN2 → RUN3
-// ------------------------------------------------------------
-const PIPELINE0 = [
-    "RUN0.INIT",
-    "RUN1.AXIS",
-    "RUN2.MATRIX",
-    "RUN3.PHYSICS",
-    "SLI.PREPARE",
-    "TYQ.HANDSHAKE",
-    "OS_CORE.HANDSHAKE",
-    "BOOTBLOCK.READY"
-];
+AXIOM.axis = "FRONT";
 
-// ------------------------------------------------------------
-// 5. Pipeline-Ausführung
-// ------------------------------------------------------------
 function axiomove() {
     const matrix = axiomMatrix();
     const physics = axiomPhysics();
+    return {
+        axis: AXIOM.axis,
+        matrix,
+        physics,
+        next: 3   // Startpunkt
+    };
+}
+▣ → 3 ↗ 9 ↘ ◎ ↗ ↘ 3 9 ↘ ↗ ◎ ↗ ↘ 81 ◆ → 27 → 3 ↺
+
+if (Runtime.mode === "▣") {      // Blockraum
+    const ax = axiomove();
+    Runtime.mode = ax.next;      // → 3
+}
+
+Runtime.mode = "▣";   // Start im Blockraum
 
