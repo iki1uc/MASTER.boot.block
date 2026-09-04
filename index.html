@@ -272,24 +272,52 @@ const state = {
 };
 
 /* ================================================================
-   2. CIRCLE‑ENGINE — echt eingebaut, kein Iframe mehr.
-   Leitet ihre Werte aus dem Zahnrad als Winkel auf einem Kreis ab
-   (12 Sektoren × 30° = 360°) — daher "Circle".
+   2. CIRCLE‑ENGINE (intern) — eigener Zustand, tick()/getState().
+   Vor jedem tick() wird ihr Zahnrad mit dem globalen state.zahnrad
+   synchronisiert — sonst läuft ihr Zähler in AIR-Phasen (wo sie
+   nicht getickt wird) auseinander und überschreibt beim nächsten
+   STAGE-Wechsel das globale Zahnrad mit einem veralteten Wert.
    ================================================================ */
 const CircleEngine = {
-  run() {
-    const angle = state.zahnrad * 30;
+  _state: {
+    pathIndex: 2,
+    a81: PFAD[2],
+    potenz: POTENZEN[2 % POTENZEN.length],
+    axis: ACHSEN[0],
+    zahnrad: 0,
+    nano: '-',
+    rein: '-',
+    impuls: '-'
+  },
+
+  tick() {
+    this._state.zahnrad = state.zahnrad; // Sync vor der Berechnung
+
+    const angle = this._state.zahnrad * 30;
     const idx = Math.floor((angle / 360) * PFAD.length) % PFAD.length;
 
-    state.pathIndex = idx;
-    state.a81 = PFAD[idx];
-    state.potenz = POTENZEN[idx % POTENZEN.length];
-    state.axis = ACHSEN[state.zahnrad % ACHSEN.length];
-    state.nano = (state.a81 / 9).toFixed(2);
-    state.rein = Math.sqrt(state.a81).toFixed(2);
-    state.impuls = state.zahnrad % 2 === 0 ? "KUCK" : "KUCK-KUCK";
+    this._state.pathIndex = idx;
+    this._state.a81 = PFAD[idx];
+    this._state.potenz = POTENZEN[idx % POTENZEN.length];
+    this._state.axis = ACHSEN[this._state.zahnrad % ACHSEN.length];
+    this._state.nano = (this._state.a81 / 9).toFixed(2);
+    this._state.rein = Math.sqrt(this._state.a81).toFixed(2);
+    this._state.impuls = this._state.zahnrad % 2 === 0 ? "KUCK" : "KUCK-KUCK";
+  },
+
+  getState() {
+    return { ...this._state };
   }
 };
+
+function readCircle() {
+  CircleEngine.tick();
+  return CircleEngine.getState();
+}
+
+function circleIsAlive() {
+  return true;
+}
 
 /* ================================================================
    3. FUSION‑ENGINE — lineares Pfad-Stepping (unabhängig vom Zahnrad-Winkel)
@@ -298,6 +326,7 @@ const FusionEngine = {
   run() {
     this.runPath();
     this.runTiming();
+    state.zahnrad = (state.zahnrad + 1) % 12; // AIR muss das Zahnrad selbst weiterzählen
   },
   runPath() {
     state.pathIndex = (state.pathIndex + 1) % PFAD.length;
@@ -327,6 +356,36 @@ function checkMode() {
     state.mode = newMode;
   }
 }
+
+/* ================================================================
+   5. ENGINE‑ROUTING (Master‑Bootblock‑Kern)
+   ================================================================ */
+function updateEngineState() {
+  checkMode();
+
+  if (state.mode === 'stage') {
+
+    const data = readCircle();     // interne Engine
+    Object.assign(state, data);    // circle ist IMMER verfügbar
+    state.zahnrad = (data.zahnrad + 1) % 12; // Zahnrad kommt aus circle, zählt selbst weiter
+
+  } else if (state.mode === 'air') {
+
+    FusionEngine.run();
+
+  } else if (state.mode === 'aiv') {
+
+    const c = readCircle();        // circle intern
+    FusionEngine.run();            // fusion intern (zählt Zahnrad bereits selbst)
+
+    state.a81 = c.a81;
+    state.potenz = c.potenz;
+    state.pathIndex = c.pathIndex;
+    // axis, delta bleiben von Fusion
+
+  }   // ← schließt AIV‑Block
+
+}     // ← schließt updateEngineState()
 
 /* ================================================================
    5. ZEIT — zentral, einmal pro Step
@@ -412,12 +471,11 @@ function updateDisplay() {
   document.getElementById('deltaDisplay').textContent =
     state.step === 0 ? '–' : state.delta.toFixed(1);
 
+  // Boot‑Dot: circle läuft immer intern, keine Offline-Prüfung nötig
   const dot = document.getElementById('bootDot');
   const status = document.getElementById('bootStatus');
-  dot.className = 'status-dot dot-' + state.mode;
-  status.textContent = state.mode === 'stage' ? 'STAGE AKTIV · Circle-Engine' :
-                        state.mode === 'air' ? 'AIR AKTIV · Fusion-Engine' :
-                        'AIV AKTIV · Hybrid';
+  dot.className = 'status-dot dot-stage';
+  status.textContent = 'circle INTERNAL';
 
   drawOrbit();
 }
@@ -441,20 +499,8 @@ function log(msg, type = '') {
 let loopInterval = null;
 
 function step() {
-  checkMode(); // Modus anhand des AKTUELLEN Zahnrads bestimmen
-
-  if (state.mode === 'stage') {
-    CircleEngine.run();
-  } else if (state.mode === 'air') {
-    FusionEngine.run();
-  } else {
-    // AIV: Circle liefert A81/Potenz/Pfad, Fusion überschreibt Achse/nano/rein/impuls
-    CircleEngine.run();
-    FusionEngine.runTiming();
-  }
-
+  updateEngineState(); // ruft checkMode() + Circle/Fusion je nach Modus auf, setzt Zahnrad
   tickTiming();
-  state.zahnrad = (state.zahnrad + 1) % 12; // einzige Stelle, die Zahnrad erhöht
 
   updateDisplay();
   log(`Step ${state.step} · Modus ${state.mode} · A81=${state.a81} · Achse=${state.axis}`, state.mode);
@@ -514,8 +560,9 @@ document.getElementById('resetBtn').addEventListener('click', resetSystem);
 /* ================================================================
    11. INIT
    ================================================================ */
+log('🔵 circle INTERNAL · full sync', 'stage');
 updateDisplay();
-log('Master‑Bootblock aktiv. Circle-Engine läuft lokal, kein externes Iframe mehr nötig.', 'stage');
+log('Master‑Bootblock aktiv. Zahnrad steuert Modus.', 'air');
 </script>
 
 </body>
