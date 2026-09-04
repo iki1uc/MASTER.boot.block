@@ -158,22 +158,36 @@
       margin-right: 6px;
       vertical-align: middle;
     }
-    .dot-online { background: #6ec8ff; box-shadow: 0 0 8px #6ec8ff44; }
-    .dot-offline { background: #ff6b6b; box-shadow: 0 0 8px #ff6b6b44; }
+    .dot-stage { background: #6ec8ff; box-shadow: 0 0 8px #6ec8ff44; }
+    .dot-air   { background: #ffd866; box-shadow: 0 0 8px #ffd86644; }
+    .dot-aiv   { background: #ff7b7b; box-shadow: 0 0 8px #ff7b7b44; }
+
+    .fix {
+      background: #12251f;
+      border: 1px solid #234f3a;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #7fcf9a;
+      margin-bottom: 16px;
+    }
   </style>
 </head>
 <body>
 
-<!-- circle.html wird optional geladen – wenn vorhanden, wird es genutzt -->
-<iframe id="circleEngine" src="circle.html" style="display:none; width:0; height:0; border:0;"></iframe>
-
 <div class="wrap">
+
+  <div class="fix">
+    Fix: Das Iframe zu <code>circle.html</code> ist entfernt — die Datei existierte nicht, und selbst wenn,
+    blockieren die meisten Browser <code>iframe.contentWindow</code>-Zugriff bei lokalen <code>file://</code>-Dateien.
+    Die Circle-Engine rechnet jetzt direkt in dieser Datei — echt, ohne externe Abhängigkeit.
+  </div>
 
   <header>
     <h1>⚡ MASTER‑BOOTBLOCK · RUN21</h1>
     <div class="badge">
-      <span class="status-dot dot-online" id="bootDot"></span>
-      <span id="bootStatus">SYSTEM READY</span>
+      <span class="status-dot dot-stage" id="bootDot"></span>
+      <span id="bootStatus">STAGE AKTIV</span>
     </div>
   </header>
 
@@ -216,7 +230,7 @@
         <h2>🌐 ORBIT · 9 ACHSEN</h2>
         <canvas id="orbitCanvas" width="400" height="400"></canvas>
         <div style="font-size:11px; color:#6a6f7a; text-align:center; margin-top:4px;">
-          <span id="orbitLegend">● STAGE · circle‑Engine</span>
+          <span id="orbitLegend">● STAGE · Circle‑Engine</span>
         </div>
       </div>
     </div>
@@ -235,7 +249,7 @@
 
 <script>
 /* ================================================================
-   1. PFAD & STATE (aus Rotational Engine)
+   1. PFAD & STATE
    ================================================================ */
 const PFAD = [3, 9, 81, 243, 81, 9];
 const ACHSEN = ["d", "e", "i", "n", "o", "r", "s", "u", "w"];
@@ -252,62 +266,51 @@ const state = {
   step: 0,
   lastTickTime: performance.now(),
   lastSwitch: '-',
-  // zusätzliche Felder für nano/rein/impuls (optional)
   nano: '-',
   rein: '-',
   impuls: '-'
 };
 
 /* ================================================================
-   2. FUSION‑ENGINE (direkt in index.html) – basierend auf RotationalEngine
+   2. CIRCLE‑ENGINE — echt eingebaut, kein Iframe mehr.
+   Leitet ihre Werte aus dem Zahnrad als Winkel auf einem Kreis ab
+   (12 Sektoren × 30° = 360°) — daher "Circle".
    ================================================================ */
-const FusionEngine = {
+const CircleEngine = {
   run() {
-    // Pfad-Schritt
-    state.pathIndex = (state.pathIndex + 1) % PFAD.length;
-    state.a81 = PFAD[state.pathIndex];
+    const angle = state.zahnrad * 30;
+    const idx = Math.floor((angle / 360) * PFAD.length) % PFAD.length;
 
-    // Potenz
-    state.potenz = POTENZEN[state.step % POTENZEN.length];
-
-    // Achse
-    state.axis = ACHSEN[state.step % ACHSEN.length];
-
-    // nano / rein / impuls (wie in Rotational Engine)
+    state.pathIndex = idx;
+    state.a81 = PFAD[idx];
+    state.potenz = POTENZEN[idx % POTENZEN.length];
+    state.axis = ACHSEN[state.zahnrad % ACHSEN.length];
     state.nano = (state.a81 / 9).toFixed(2);
     state.rein = Math.sqrt(state.a81).toFixed(2);
-    state.impuls = state.step % 2 === 0 ? "KUCK" : "KUCK-KUCK";
-
-    // Zeit
-    const now = performance.now();
-    state.delta = now - state.lastTickTime;
-    state.lastTickTime = now;
-
-    // Zahnrad + Step
-    state.zahnrad = (state.zahnrad + 1) % 12;
-    state.step++;
+    state.impuls = state.zahnrad % 2 === 0 ? "KUCK" : "KUCK-KUCK";
   }
 };
 
 /* ================================================================
-   3. circle‑ENGINE LESEN (optional, mit Fehlerbehandlung)
+   3. FUSION‑ENGINE — lineares Pfad-Stepping (unabhängig vom Zahnrad-Winkel)
    ================================================================ */
-function readCircle() {
-  try {
-    const iframe = document.getElementById('circleEngine');
-    if (!iframe || !iframe.contentWindow) return null;
-    const api = iframe.contentWindow.getCircleState;
-    if (typeof api !== 'function') return null;
-    return api();
-  } catch (_) {
-    return null;
+const FusionEngine = {
+  run() {
+    this.runPath();
+    this.runTiming();
+  },
+  runPath() {
+    state.pathIndex = (state.pathIndex + 1) % PFAD.length;
+    state.a81 = PFAD[state.pathIndex];
+    state.potenz = POTENZEN[state.step % POTENZEN.length];
+  },
+  runTiming() {
+    state.axis = ACHSEN[state.step % ACHSEN.length];
+    state.nano = (state.a81 / 9).toFixed(2);
+    state.rein = Math.sqrt(state.a81).toFixed(2);
+    state.impuls = state.step % 2 === 0 ? "KUCK" : "KUCK-KUCK";
   }
-}
-
-function circleIsAlive() {
-  const data = readCircle();
-  return data && typeof data.a81 === 'number';
-}
+};
 
 /* ================================================================
    4. MODUS‑UMSCHALTER (STAGE / AIR / AIV) per Zahnrad
@@ -326,36 +329,13 @@ function checkMode() {
 }
 
 /* ================================================================
-   5. ENGINE‑ROUTING (Master‑Bootblock‑Kern)
+   5. ZEIT — zentral, einmal pro Step
    ================================================================ */
-function updateEngineState() {
-  checkMode();
-
-  if (state.mode === 'stage') {
-    // circle.html lesen – wenn verfügbar
-    const data = readCircle();
-    if (data) {
-      Object.assign(state, data);
-      // Sicherstellen, dass Zahnrad vom Circle kommt
-      if (data.zahnrad !== undefined) state.zahnrad = data.zahnrad;
-    } else {
-      // Fallback: FusionEngine
-      FusionEngine.run();
-      log('⚠️ circle nicht erreichbar → Fusion‑Fallback', 'error');
-    }
-  } else if (state.mode === 'air') {
-    FusionEngine.run();
-  } else if (state.mode === 'aiv') {
-    // Hybrid: Circle liefert A81/Potenz, Fusion liefert Axis/Delta
-    const c = readCircle();
-    FusionEngine.run();
-    if (c) {
-      state.a81 = c.a81 ?? state.a81;
-      state.potenz = c.potenz ?? state.potenz;
-      state.pathIndex = c.pathIndex ?? state.pathIndex;
-    }
-    // axis, delta bleiben von Fusion
-  }
+function tickTiming() {
+  const now = performance.now();
+  state.delta = now - state.lastTickTime;
+  state.lastTickTime = now;
+  state.step++;
 }
 
 /* ================================================================
@@ -374,7 +354,6 @@ function drawOrbit() {
     return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
   });
 
-  // Verbindungslinien
   ctx.strokeStyle = '#2a2e3a';
   ctx.lineWidth = 1.5;
   ctx.beginPath();
@@ -385,7 +364,6 @@ function drawOrbit() {
   });
   ctx.stroke();
 
-  // Knoten
   points.forEach((p, i) => {
     const active = (ACHSEN[i] === state.axis);
     ctx.beginPath();
@@ -403,12 +381,13 @@ function drawOrbit() {
     ctx.fillText(ACHSEN[i], p.x, p.y);
   });
 
-  // Legende
   const legend = document.getElementById('orbitLegend');
   const modeColor = state.mode === 'stage' ? '#6ec8ff' :
                     state.mode === 'air' ? '#ffd866' : '#ff7b7b';
   const axisLabel = state.axis !== '-' ? state.axis.toUpperCase() : '—';
-  legend.innerHTML = `● <span style="color:${modeColor}">${state.mode.toUpperCase()}</span> · Achse ${axisLabel}`;
+  const engineLabel = state.mode === 'air' ? 'Fusion-Engine' :
+                       state.mode === 'aiv' ? 'Circle+Fusion Hybrid' : 'Circle-Engine';
+  legend.innerHTML = `● <span style="color:${modeColor}">${state.mode.toUpperCase()}</span> · ${engineLabel} · Achse ${axisLabel}`;
 }
 
 /* ================================================================
@@ -430,18 +409,15 @@ function updateDisplay() {
   document.getElementById('pathIndexDisplay').textContent = state.pathIndex;
   document.getElementById('axisDisplay').textContent = state.axis;
   document.getElementById('potenzDisplay').textContent = state.potenz;
-  document.getElementById('deltaDisplay').textContent = state.delta.toFixed(1);
+  document.getElementById('deltaDisplay').textContent =
+    state.step === 0 ? '–' : state.delta.toFixed(1);
 
-  // Boot‑Dot
   const dot = document.getElementById('bootDot');
   const status = document.getElementById('bootStatus');
-  if (circleIsAlive()) {
-    dot.className = 'status-dot dot-online';
-    status.textContent = 'circle ONLINE';
-  } else {
-    dot.className = 'status-dot dot-offline';
-    status.textContent = 'circle OFFLINE · Fusion‑Fallback';
-  }
+  dot.className = 'status-dot dot-' + state.mode;
+  status.textContent = state.mode === 'stage' ? 'STAGE AKTIV · Circle-Engine' :
+                        state.mode === 'air' ? 'AIR AKTIV · Fusion-Engine' :
+                        'AIV AKTIV · Hybrid';
 
   drawOrbit();
 }
@@ -465,9 +441,23 @@ function log(msg, type = '') {
 let loopInterval = null;
 
 function step() {
-  updateEngineState();
+  checkMode(); // Modus anhand des AKTUELLEN Zahnrads bestimmen
+
+  if (state.mode === 'stage') {
+    CircleEngine.run();
+  } else if (state.mode === 'air') {
+    FusionEngine.run();
+  } else {
+    // AIV: Circle liefert A81/Potenz/Pfad, Fusion überschreibt Achse/nano/rein/impuls
+    CircleEngine.run();
+    FusionEngine.runTiming();
+  }
+
+  tickTiming();
+  state.zahnrad = (state.zahnrad + 1) % 12; // einzige Stelle, die Zahnrad erhöht
+
   updateDisplay();
-  log(`Step ${state.step} · Modus ${state.mode} · A81=${state.a81}`, state.mode);
+  log(`Step ${state.step} · Modus ${state.mode} · A81=${state.a81} · Achse=${state.axis}`, state.mode);
 }
 
 function toggleLoop() {
@@ -524,17 +514,8 @@ document.getElementById('resetBtn').addEventListener('click', resetSystem);
 /* ================================================================
    11. INIT
    ================================================================ */
-// circle-Verfügbarkeit prüfen
-setTimeout(() => {
-  if (!circleIsAlive()) {
-    log('⚠️ circle.html nicht erreichbar – prüfe src oder API.', 'error');
-  } else {
-    log('✅ circle.html verbunden. API verfügbar.', 'stage');
-  }
-}, 300);
-
 updateDisplay();
-log('Master‑Bootblock aktiv. Zahnrad steuert Modus.', 'air');
+log('Master‑Bootblock aktiv. Circle-Engine läuft lokal, kein externes Iframe mehr nötig.', 'stage');
 </script>
 
 </body>
