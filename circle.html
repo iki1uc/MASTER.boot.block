@@ -139,7 +139,19 @@
 </div>
 
 <script>
-  // Zustand
+ window.getCircleState = function() {
+  return {
+    a81: state.a81,
+    axis: state.axis,
+    potenz: state.potenz,
+    zahnrad: state.zahnrad,
+    delta: state.delta,
+    step: state.step,
+    pathIndex: state.pathIndex
+  };
+};
+
+ // Zustand
   const state = { input: 0, resultA: 0, resultB: 0, hits: 0 };
   const logs = [];
   let highlightIndex = -1;
