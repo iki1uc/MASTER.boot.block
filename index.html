@@ -3,542 +3,529 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>⚡ IKI1UC · RUN21 · CORE</title>
+  <title>MASTER.boot.block · goldene 6 · 3‑9‑81</title>
   <style>
     * { margin:0; padding:0; box-sizing:border-box; }
     body {
-      background: #0a0e14;
-      color: #d0d8e0;
-      font-family: 'Consolas', 'Segoe UI', monospace;
-      padding: 20px;
-      min-height: 100vh;
+      background: #0a0b10;
+      color: #d0d8e8;
+      font-family: 'Consolas', 'Courier New', monospace;
+      padding: 24px;
       display: flex;
       justify-content: center;
-      background-image: radial-gradient(ellipse at 20% 30%, #0d1a2a, #050608);
     }
-    .wrap { max-width: 1100px; width: 100%; }
+    .container { max-width: 1200px; width:100%; }
 
+    /* Header */
     header {
       display: flex;
-      flex-wrap: wrap;
       justify-content: space-between;
-      align-items: center;
-      margin-bottom: 18px;
+      align-items: flex-end;
+      flex-wrap: wrap;
+      border-bottom: 2px solid #ffd700;
       padding-bottom: 10px;
-      border-bottom: 2px solid #1a2230;
+      margin-bottom: 28px;
     }
     header h1 {
-      font-size: 28px;
-      font-weight: 300;
-      letter-spacing: 3px;
-      background: linear-gradient(135deg, #6ec8ff, #ffd866);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      font-size: 26px;
+      letter-spacing: 4px;
+      color: #ffd700;
+      text-shadow: 0 0 16px #ffd70044;
     }
-    header .badge {
+    header h1 span { color: #00e5ff; }
+    header .sub { font-size: 14px; color: #8899bb; }
+    .user-badge {
+      background: #141a2a;
+      border: 1px solid #2a3a60;
+      border-radius: 40px;
+      padding: 6px 18px;
       font-size: 13px;
-      background: #101820;
-      padding: 4px 16px;
-      border-radius: 30px;
-      border: 1px solid #2a3a4a;
-      color: #8a9aaa;
+      color: #aabbdd;
     }
-    .badge .dot {
-      display: inline-block;
-      width: 10px; height: 10px;
-      border-radius: 50%;
-      margin-right: 6px;
-      vertical-align: middle;
-      animation: pulse 1.2s infinite;
-    }
-    .dot-stage { background: #6ec8ff; box-shadow: 0 0 10px #6ec8ff66; }
-    .dot-air   { background: #ffd866; box-shadow: 0 0 10px #ffd86666; }
-    .dot-aiv   { background: #ff7b7b; box-shadow: 0 0 10px #ff7b7b66; }
-    @keyframes pulse {
-      0% { transform: scale(1); opacity: 0.7; }
-      50% { transform: scale(1.3); opacity: 1; }
-      100% { transform: scale(1); opacity: 0.7; }
-    }
+    .user-badge .name { color: #ffd700; }
+    .user-badge .lvl { color: #00ff88; }
 
+    /* Grid */
     .grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 18px;
-      margin-bottom: 18px;
+      gap: 24px;
+      margin-bottom: 24px;
     }
-    @media (max-width: 820px) { .grid { grid-template-columns: 1fr; } }
+    @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
 
     .card {
-      background: #0e141c;
-      border: 1px solid #1a2230;
-      border-radius: 12px;
-      padding: 16px;
-      transition: border-color 0.3s;
+      background: #111622;
+      border: 1px solid #1e2844;
+      border-radius: 16px;
+      padding: 20px 24px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.6);
     }
-    .card.stage-card { border-top: 3px solid #6ec8ff; }
-    .card.air-card   { border-top: 3px solid #ffd866; }
-    .card.aiv-card   { border-top: 3px solid #ff7b7b; }
     .card h2 {
-      font-size: 12px;
-      font-weight: 400;
-      letter-spacing: 1px;
-      color: #5a6a7a;
-      margin-bottom: 10px;
-      border-bottom: 1px solid #16202a;
-      padding-bottom: 5px;
+      font-size: 13px;
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      color: #8899bb;
+      margin-bottom: 16px;
+      border-bottom: 1px solid #1a2240;
+      padding-bottom: 6px;
     }
 
     .row {
       display: flex;
       justify-content: space-between;
-      padding: 4px 0;
-      border-bottom: 1px solid #0e1620;
-      font-size: 13px;
+      font-size: 14px;
+      padding: 6px 0;
+      border-bottom: 1px solid #1a2240;
     }
     .row:last-child { border-bottom: none; }
-    .row .label { color: #5a6a7a; }
-    .row .value { font-weight: 500; }
+    .row .label { color: #7788aa; }
+    .row .value { font-weight: 600; color: #ffd700; }
 
-    .mode-indicator {
-      display: inline-block;
-      padding: 2px 14px;
+    input[type="range"] {
+      width: 100%;
+      height: 4px;
+      -webkit-appearance: none;
+      background: #1e2844;
+      border-radius: 10px;
+      outline: none;
+      margin: 14px 0 8px;
+    }
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      background: #ffd700;
+      border-radius: 50%;
+      cursor: pointer;
+      box-shadow: 0 0 20px #ffd70066;
+    }
+
+    .btn-group { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0 4px; }
+    .btn {
+      background: #1a2240;
+      border: 1px solid #2a3a60;
+      color: #c8d0e0;
+      padding: 8px 16px;
       border-radius: 30px;
-      font-weight: 700;
-      font-size: 13px;
-      background: #16202a;
-      color: #8a9aaa;
-    }
-    .mode-stage { background: #0a2a3a; color: #6ec8ff; }
-    .mode-air   { background: #2a2a0a; color: #ffd866; }
-    .mode-aiv   { background: #2a0a1a; color: #ff7b7b; }
-
-    .btn-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 10px;
-    }
-    button {
-      background: #141e28;
-      color: #d0d8e0;
-      border: 1px solid #2a3a4a;
-      border-radius: 6px;
-      padding: 6px 14px;
-      font-size: 12px;
       font-family: inherit;
+      font-size: 12px;
       cursor: pointer;
       transition: all 0.2s;
+      letter-spacing: 0.5px;
     }
-    button:hover { background: #1e2a36; border-color: #4a5a6a; }
-    button.primary { border-color: #4a7a9a; color: #6ec8ff; }
-    button.primary:hover { background: #0a2a3a; }
-    button.danger { border-color: #ff6b6b; color: #ff6b6b; }
+    .btn:hover {
+      background: #2a3a60;
+      border-color: #ffd700;
+      color: #ffd700;
+      box-shadow: 0 0 20px #ffd70033;
+    }
+    .btn.primary {
+      background: #ffd70022;
+      border-color: #ffd700;
+      color: #ffd700;
+    }
+    .btn.primary:hover { background: #ffd70044; }
+    .btn.secondary { background: #141a2a; border-color: #3a4a70; }
 
-    canvas {
+    /* Orbit Canvas */
+    .orbit-wrap { display: flex; justify-content: center; margin: 12px 0 6px; }
+    #orbitCanvas {
       width: 100%;
-      max-width: 400px;
-      display: block;
-      margin: 8px auto;
-      background: #0a0e14;
-      border: 1px solid #16202a;
-      border-radius: 10px;
+      max-width: 480px;
+      height: auto;
+      aspect-ratio: 1/1;
+      background: #0a0b10;
+      border-radius: 16px;
+      border: 1px solid #1e2844;
     }
 
-    .log {
-      height: 120px;
+    /* Log */
+    .log-box {
+      background: #06080c;
+      border: 1px solid #1a2240;
+      border-radius: 12px;
+      padding: 14px 18px;
+      height: 170px;
       overflow-y: auto;
-      background: #080c12;
-      border: 1px solid #16202a;
-      border-radius: 8px;
-      padding: 8px 12px;
-      font-size: 11px;
-      line-height: 1.6;
-      color: #5a6a7a;
-    }
-    .log .entry { padding: 1px 0; border-bottom: 1px solid #0e141c; }
-    .log .time { color: #2a3a4a; }
-    .log .msg { color: #b0b8c0; }
-    .log .msg.stage { color: #6ec8ff; }
-    .log .msg.air   { color: #ffd866; }
-    .log .msg.aiv   { color: #ff7b7b; }
-    .log .msg.error { color: #ff6b6b; }
-
-    .pfad-visual {
-      display: flex;
-      gap: 4px;
-      justify-content: center;
-      margin: 6px 0;
-      font-size: 14px;
-      font-weight: 600;
-      color: #3a4a5a;
-    }
-    .pfad-visual .active {
-      color: #ffd866;
-      text-shadow: 0 0 16px #ffd86644;
-    }
-    .pfad-visual .sep { color: #1a2230; }
-
-    .energy-bar {
-      background: #080c12;
-      border-radius: 8px;
-      height: 6px;
-      margin: 6px 0 4px;
-      overflow: hidden;
-      border: 1px solid #16202a;
-    }
-    .energy-bar .fill {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #6ec8ff, #ffd866);
-      transition: width 0.3s ease;
-    }
-
-    .footer {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      justify-content: center;
-      margin-top: 14px;
-      padding: 8px;
-      background: #0e141c;
-      border-radius: 10px;
-      border: 1px solid #16202a;
       font-size: 12px;
-      color: #5a6a7a;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      color: #99aabb;
+      font-family: inherit;
     }
-    .footer .stat { display: flex; align-items: center; gap: 4px; }
-    .footer .dot-sm {
-      width: 8px; height: 8px; border-radius: 50%;
-    }
-    .footer .dot-sm.stage { background: #6ec8ff; }
-    .footer .dot-sm.air   { background: #ffd866; }
-    .footer .dot-sm.aiv   { background: #ff7b7b; }
+    .log-box .hl { color: #ffd700; }
+    .log-box .ok { color: #00ff88; }
 
     ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: #080c12; }
-    ::-webkit-scrollbar-thumb { background: #16202a; border-radius: 4px; }
+    ::-webkit-scrollbar-track { background: #06080c; }
+    ::-webkit-scrollbar-thumb { background: #2a3a60; border-radius: 10px; }
+
+    .footer {
+      margin-top: 24px;
+      padding-top: 16px;
+      border-top: 1px solid #1a2240;
+      font-size: 11px;
+      color: #445566;
+      text-align: center;
+    }
   </style>
 </head>
 <body>
-
-<div class="wrap">
+<div class="container">
 
   <header>
-    <h1>⚡ RUN21 · CORE</h1>
-    <div class="badge">
-      <span class="dot dot-stage" id="bootDot"></span>
-      <span id="bootStatus">STAGE</span>
+    <div>
+      <h1><span>◆</span> MASTER.<span>boot</span>.block</h1>
+      <div class="sub">goldene 6 · 3‑9‑81‑Orbit · DEFCON: Atome werden geladen</div>
+    </div>
+    <div class="user-badge">
+      <span class="name">🜁 Ridvan</span>  ·  <span class="lvl">Level 6</span>  ·  <span style="color:#00e5ff;">active</span>
     </div>
   </header>
 
   <div class="grid">
 
-    <div>
-      <div class="card stage-card" id="modeCard">
-        <h2>🌀 MODUS · ZAHNRAD</h2>
-        <div class="row"><span class="label">Zahnrad</span><span class="value" id="zahnradDisplay">0</span></div>
-        <div class="row">
-          <span class="label">Modus</span>
-          <span class="value"><span class="mode-indicator" id="modeDisplay">stage</span></span>
-        </div>
-        <div class="row"><span class="label">Tick</span><span class="value" id="tickDisplay">0</span></div>
+    <!-- Linke Spalte: Engine & Regler -->
+    <div class="card">
+      <h2>⚡ Engine · Kern</h2>
+      <div class="row"><span class="label">pump (Energie)</span><span class="value" id="pumpDisplay">0</span></div>
+      <input type="range" id="pumpSlider" min="0" max="100" value="0" step="1">
 
-        <div class="energy-bar"><div class="fill" id="energyFill"></div></div>
+      <div class="row"><span class="label">Formel A (pump / 6)</span><span class="value" id="jumpADisplay">0</span></div>
+      <div class="row"><span class="label">Formel B (pump / 8)</span><span class="value" id="jumpBDisplay">0</span></div>
+      <div class="row"><span class="label">hits (A>0)</span><span class="value" id="hitsDisplay">0</span></div>
 
-        <div class="pfad-visual" id="pfadVisual">
-          <span class="active" id="p0">3</span><span class="sep">→</span>
-          <span id="p1">9</span><span class="sep">→</span>
-          <span id="p2">81</span><span class="sep">→</span>
-          <span id="p3">243</span><span class="sep">→</span>
-          <span id="p4">81</span><span class="sep">→</span>
-          <span id="p5">9</span>
-        </div>
-
-        <div class="btn-row">
-          <button id="stepBtn" class="primary">▶ Step</button>
-          <button id="loopBtn">▶ Loop</button>
-          <button id="stopBtn">⏹ Stop</button>
-          <button id="resetBtn" class="danger">⟲ Reset</button>
-        </div>
+      <div class="btn-group">
+        <button class="btn primary" id="runEngineBtn">▶ predictiveEngine()</button>
+        <button class="btn secondary" id="resetBtn">⟲ Reset</button>
       </div>
-
-      <div class="card">
-        <h2>📊 ENGINE</h2>
-        <div class="row"><span class="label">A81</span><span class="value" id="a81Display">81</span></div>
-        <div class="row"><span class="label">Achse</span><span class="value" id="axisDisplay">–</span></div>
-        <div class="row"><span class="label">Potenz</span><span class="value" id="potenzDisplay">–</span></div>
-        <div class="row"><span class="label">Δt</span><span class="value" id="deltaDisplay">–</span></div>
+      <div style="margin-top:8px; font-size:12px; color:#667;">
+        USER‑Impuls: Level 6 + active = <span id="userImpulseDisplay">7</span>
       </div>
     </div>
 
-    <div>
-      <div class="card">
-        <h2>🌐 ORBIT</h2>
-        <canvas id="orbitCanvas" width="400" height="400"></canvas>
-        <div style="font-size:11px; color:#5a6a7a; text-align:center; margin-top:4px;">
-          <span id="orbitLegend">● STAGE · Achse —</span>
-        </div>
+    <!-- Rechte Spalte: Moves & Axiome -->
+    <div class="card">
+      <h2>🌀 Ungewöhnliche Moves & Axiome</h2>
+      <div class="btn-group">
+        <button class="btn" data-move="OI">OI · OUT→IN</button>
+        <button class="btn" data-move="IO">IO · IN→OUT</button>
+        <button class="btn" data-move="XI">XI · CROSS→IN</button>
+        <button class="btn" data-move="IX">IX · IN→CROSS</button>
+      </div>
+      <div class="btn-group" style="margin-top:6px;">
+        <button class="btn" id="toggleAxleBtn">↕ toggleAxle()</button>
+        <button class="btn" id="rirKitBtn">⚙️ RIR_KIT</button>
+        <button class="btn" id="doorBtn">🚪 DOOR</button>
+        <button class="btn" id="dooBtn">◈ DOO</button>
+      </div>
+      <div style="margin-top:12px; font-size:13px; color:#7788aa;">
+        letzter Move: <span id="lastMoveDisplay" style="color:#ffd700;">—</span>
+      </div>
+      <div style="font-size:12px; color:#445566; margin-top:4px;">
+        Achse: <span id="axleStateDisplay">neutral</span>
       </div>
     </div>
-
   </div>
 
-  <div class="card">
-    <h2>📜 LOG</h2>
-    <div class="log" id="logBox">
-      <div class="entry"><span class="time">[init]</span> <span class="msg">RUN21 CORE gestartet.</span></div>
+  <!-- Orbit-Visualisierung -->
+  <div class="card" style="margin-bottom:24px;">
+    <h2>🌌 3‑9‑81 Orbit · goldene 6</h2>
+    <div class="orbit-wrap">
+      <canvas id="orbitCanvas" width="600" height="600"></canvas>
     </div>
+    <div style="display:flex; justify-content:center; gap:16px; flex-wrap:wrap; font-size:12px; color:#667; margin-top:6px;">
+      <span>▣ FRONT</span> <span style="color:#ffd700;">3</span> <span style="color:#00e5ff;">9</span>
+      <span style="color:#88ff88;">◎</span> <span style="color:#ff88ff;">81 ◆</span>
+      <span style="color:#ff8844;">△</span> <span style="color:#44aaff;">27</span> <span style="color:#ffd700;">3 ↺</span>
+    </div>
+  </div>
+
+  <!-- Log -->
+  <div class="card">
+    <h2>📜 Chronik</h2>
+    <div class="log-box" id="logBox">[SYSTEM] MASTER.boot.block initialisiert.</div>
   </div>
 
   <div class="footer">
-    <div class="stat"><span class="dot-sm stage"></span> STAGE</div>
-    <div class="stat"><span class="dot-sm air"></span> AIR</div>
-    <div class="stat"><span class="dot-sm aiv"></span> AIV</div>
-    <div class="stat">⚡ <span id="footerEnergy">0%</span></div>
+    iki1uc · MASTER.boot.block · NO‑USE · alle Rechte vorbehalten
   </div>
-
 </div>
 
 <script>
-// ================================================================
-// 1. PFAD & STATE (nur das Nötigste)
-// ================================================================
-const PFAD = [3, 9, 81, 243, 81, 9];
-const ACHSEN = ["d", "e", "i", "n", "o", "r", "s", "u", "w"];
-const POTENZEN = [1, 3, 9, 27, 81, 243, 729];
+  // ============================================================
+  // 1. USER & ENGINE (nach deinem Vorbild)
+  // ============================================================
+  const USER = { name: "Ridvan", level: 6, status: "active" };
 
-const state = {
-  mode: 'stage',
-  pathIndex: 2,
-  a81: 81,
-  axis: '-',
-  potenz: '-',
-  delta: 0,
-  zahnrad: 0,
-  step: 0,
-  lastTickTime: performance.now(),
-  energy: 0
-};
+  const Engine = {
+    state: { pump: 0, cpuJumpA: 0, cpuJumpB: 0, active: 1 },
+    memory: { hits: 0, logs: [] },
 
-// ================================================================
-// 2. CIRCLE ENGINE (kreisbasiert)
-// ================================================================
-const Circle = {
-  _idx: 2,
-  tick() {
-    const angle = state.zahnrad * 30;
-    this._idx = Math.floor((angle / 360) * PFAD.length) % PFAD.length;
-    return {
-      a81: PFAD[this._idx],
-      axis: ACHSEN[state.zahnrad % ACHSEN.length],
-      potenz: POTENZEN[this._idx % POTENZEN.length],
-      pathIndex: this._idx
-    };
-  }
-};
+    userImpulse() {
+      return USER.level + this.state.active;
+    },
 
-// ================================================================
-// 3. FUSION ENGINE (linear)
-// ================================================================
-function fusionTick() {
-  state.pathIndex = (state.pathIndex + 1) % PFAD.length;
-  state.a81 = PFAD[state.pathIndex];
-  state.potenz = POTENZEN[state.step % POTENZEN.length];
-  state.axis = ACHSEN[state.step % ACHSEN.length];
-  state.zahnrad = (state.zahnrad + 1) % 12;
-}
+    // Formel A
+    predictiveEngine() {
+      const active = this.userImpulse();
+      const jumpA = active + Math.floor(this.state.pump / 6);
+      this.state.cpuJumpA = jumpA;
+      if (jumpA > 0) this.memory.hits++;
+      this.log(`Formel A: jumpA=${jumpA}, pump=${this.state.pump}`);
+      return this.orbitFusion(jumpA);
+    },
 
-// ================================================================
-// 4. MODUS (nur 3 – STAGE, AIR, AIV)
-// ================================================================
-function checkMode() {
-  const z = state.zahnrad;
-  const newMode = z < 4 ? 'stage' : (z < 8 ? 'air' : 'aiv');
-  if (newMode !== state.mode) {
-    state.mode = newMode;
-    log(`🔄 Moduswechsel → ${newMode.toUpperCase()} (Zahnrad ${z})`, newMode);
-  }
-}
+    // Formel B (ergänzt, überschreibt nicht)
+    orbitFusion(jumpA) {
+      const active = this.userImpulse();
+      const jumpB = active + Math.floor(this.state.pump / 8);
+      this.state.cpuJumpB = jumpB;
+      this.log(`Formel B: jumpB=${jumpB} (aus A=${jumpA})`);
+      return { A: jumpA, B: jumpB };
+    },
 
-// ================================================================
-// 5. ENGINE-ROUTING (klar & kurz)
-// ================================================================
-function stepEngine() {
-  checkMode();
+    pumpUp(value) {
+      this.state.pump = Math.min(100, Math.max(0, value));
+    },
 
-  if (state.mode === 'stage') {
-    const c = Circle.tick();
-    Object.assign(state, c);
-  } else if (state.mode === 'air') {
-    fusionTick();
-  } else { // aiv
-    const c = Circle.tick();
-    fusionTick();
-    state.a81 = c.a81;
-    state.potenz = c.potenz;
-    state.pathIndex = c.pathIndex;
+    reset() {
+      this.state.pump = 0;
+      this.state.cpuJumpA = 0;
+      this.state.cpuJumpB = 0;
+      this.memory.hits = 0;
+      this.memory.logs = [];
+      this.log('⟲ Engine zurückgesetzt');
+    },
+
+    log(msg) {
+      this.memory.logs.push(msg);
+      updateUI();
+    }
+  };
+
+  // ============================================================
+  // 2. RIR / KIT (Simulation)
+  // ============================================================
+  const RIR = {
+    return(input) {
+      return { RIR: (input && input.length > 0) ? "accept" : "reject" };
+    }
+  };
+  const KIT = { run(input) { return { status: "ok", result: `KIT: ${input}` }; } };
+
+  function RIR_KIT(input) {
+    const check = RIR.return(input);
+    if (check.RIR === "reject") return { status: "reject", source: "RIR" };
+    return KIT.run(input);
   }
 
-  state.energy = Math.min(100, state.energy + 2 - 0.3);
-  const now = performance.now();
-  state.delta = now - state.lastTickTime;
-  state.lastTickTime = now;
-  state.step++;
-}
+  // ============================================================
+  // 3. Achsen & DOOR/DOO
+  // ============================================================
+  let axleState = 0; // 0=neutral, 1=LAXIO, 2=RAXIO
+  let doorOpen = false;
+  let dooActive = false;
 
-// ================================================================
-// 6. ORBIT
-// ================================================================
-function drawOrbit() {
-  const c = document.getElementById('orbitCanvas');
-  const ctx = c.getContext('2d');
-  const w = c.width, h = c.height;
-  const cx = w/2, cy = h/2, r = 150;
+  function toggleAxle() {
+    axleState = (axleState + 1) % 3;
+    const names = ['neutral', 'LAXIO (links)', 'RAXIO (rechts)'];
+    Engine.log(`Achse → ${names[axleState]}`);
+    updateUI();
+    drawOrbit(axleState);
+  }
 
-  ctx.clearRect(0, 0, w, h);
+  function doorAction() {
+    doorOpen = !doorOpen;
+    Engine.log(`🚪 DOOR ${doorOpen ? 'geöffnet' : 'geschlossen'}`);
+    updateUI();
+  }
 
-  const points = ACHSEN.map((_, i) => {
-    const angle = (i / ACHSEN.length) * 2 * Math.PI - Math.PI/2;
-    return { x: cx + r * Math.cos(angle), y: cy + r * Math.sin(angle) };
-  });
+  function dooAction() {
+    dooActive = !dooActive;
+    Engine.log(`◈ DOO ${dooActive ? 'aktiviert' : 'deaktiviert'}`);
+    updateUI();
+  }
 
-  ctx.strokeStyle = '#1a2230';
-  ctx.lineWidth = 1.5;
-  ctx.beginPath();
-  points.forEach((p, i) => {
-    const next = points[(i+1) % points.length];
-    ctx.moveTo(p.x, p.y);
-    ctx.lineTo(next.x, next.y);
-  });
-  ctx.stroke();
+  // ============================================================
+  // 4. Orbit Canvas (3‑9‑81 mit 8 Knoten)
+  // ============================================================
+  function drawOrbit(highlight = 0) {
+    const canvas = document.getElementById('orbitCanvas');
+    const ctx = canvas.getContext('2d');
+    const w = canvas.width, h = canvas.height, cx = w/2, cy = h/2, r = 190;
 
-  points.forEach((p, i) => {
-    const active = (ACHSEN[i] === state.axis);
+    ctx.clearRect(0, 0, w, h);
+    // Hintergrund
+    const grad = ctx.createRadialGradient(cx, cy, 30, cx, cy, r+40);
+    grad.addColorStop(0, '#141a2a');
+    grad.addColorStop(1, '#080a10');
+    ctx.fillStyle = grad;
+    ctx.fillRect(0, 0, w, h);
+
+    const nodes = [
+      { id: '3',   angle: -90, color: '#ffd700' },
+      { id: '9',   angle: -45, color: '#00e5ff' },
+      { id: '◎',   angle: 0,   color: '#88ff88' },
+      { id: '81',  angle: 45,  color: '#ff88ff' },
+      { id: '◆',   angle: 90,  color: '#ff88ff' },
+      { id: '△',   angle: 135, color: '#ff8844' },
+      { id: '27',  angle: 180, color: '#44aaff' },
+      { id: '▣',   angle: 225, color: '#aaaaaa' },
+    ];
+
+    // Pfad: 3→9→◎→81→◆→△→27→▣→3
+    const path = ['3','9','◎','81','◆','△','27','▣','3'];
+    ctx.strokeStyle = '#2a3a60';
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(p.x, p.y, active ? 26 : 16, 0, 2 * Math.PI);
-    ctx.fillStyle = active ? '#ffd866' : '#0e141c';
-    ctx.fill();
-    ctx.strokeStyle = active ? '#ffd866' : '#2a3a4a';
-    ctx.lineWidth = active ? 2 : 1;
+    for (let i = 0; i < path.length-1; i++) {
+      const from = nodes.find(n => n.id === path[i]);
+      const to = nodes.find(n => n.id === path[i+1]);
+      if (from && to) {
+        const ax = cx + r * Math.cos(from.angle * Math.PI/180);
+        const ay = cy + r * Math.sin(from.angle * Math.PI/180);
+        const bx = cx + r * Math.cos(to.angle * Math.PI/180);
+        const by = cy + r * Math.sin(to.angle * Math.PI/180);
+        ctx.moveTo(ax, ay);
+        ctx.lineTo(bx, by);
+      }
+    }
     ctx.stroke();
-    ctx.fillStyle = active ? '#0a0e14' : '#5a6a7a';
-    ctx.font = '600 15px monospace';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(ACHSEN[i], p.x, p.y);
-  });
 
-  const modeColor = state.mode === 'stage' ? '#6ec8ff' :
-                    state.mode === 'air' ? '#ffd866' : '#ff7b7b';
-  const label = state.mode === 'air' ? 'Fusion' :
-                state.mode === 'aiv' ? 'Hybrid' : 'Circle';
-  document.getElementById('orbitLegend').innerHTML =
-    `● <span style="color:${modeColor}">${state.mode.toUpperCase()}</span> · ${label} · Achse ${state.axis !== '-' ? state.axis.toUpperCase() : '—'}`;
-}
+    // Knoten zeichnen
+    nodes.forEach((node, idx) => {
+      const x = cx + r * Math.cos(node.angle * Math.PI/180);
+      const y = cy + r * Math.sin(node.angle * Math.PI/180);
+      const isHighlight = (idx === highlight % nodes.length);
 
-// ================================================================
-// 7. DISPLAY
-// ================================================================
-function updateDisplay() {
-  document.getElementById('zahnradDisplay').textContent = state.zahnrad;
-  document.getElementById('tickDisplay').textContent = state.step;
-  document.getElementById('a81Display').textContent = state.a81;
-  document.getElementById('axisDisplay').textContent = state.axis;
-  document.getElementById('potenzDisplay').textContent = state.potenz;
-  document.getElementById('deltaDisplay').textContent = state.delta.toFixed(1);
+      ctx.beginPath();
+      ctx.arc(x, y, isHighlight ? 26 : 20, 0, 2*Math.PI);
+      ctx.fillStyle = isHighlight ? '#ffd70033' : '#1a224066';
+      ctx.fill();
+      ctx.strokeStyle = isHighlight ? '#ffd700' : node.color;
+      ctx.lineWidth = isHighlight ? 3 : 1.5;
+      ctx.stroke();
 
-  document.getElementById('energyFill').style.width = Math.round(state.energy) + '%';
-  document.getElementById('footerEnergy').textContent = Math.round(state.energy) + '%';
+      ctx.fillStyle = node.color;
+      ctx.font = 'bold 20px monospace';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.shadowColor = node.color + '88';
+      ctx.shadowBlur = 12;
+      ctx.fillText(node.id, x, y);
+      ctx.shadowBlur = 0;
+    });
 
-  const modeEl = document.getElementById('modeDisplay');
-  modeEl.textContent = state.mode;
-  modeEl.className = 'mode-indicator mode-' + state.mode;
-
-  const dot = document.getElementById('bootDot');
-  dot.className = 'dot dot-' + state.mode;
-  document.getElementById('bootStatus').textContent = state.mode.toUpperCase();
-
-  const card = document.getElementById('modeCard');
-  card.className = 'card ' + state.mode + '-card';
-
-  const idx = state.pathIndex;
-  for (let i = 0; i < PFAD.length; i++) {
-    const el = document.getElementById('p' + i);
-    if (el) {
-      el.className = (i === idx) ? 'active' : '';
-      el.textContent = PFAD[i];
+    // Zusatzinfo bei Achsenwechsel
+    if (highlight === 1) {
+      ctx.fillStyle = '#ffd70044';
+      ctx.font = '16px monospace';
+      ctx.fillText('← LAXIO', 30, 40);
+    } else if (highlight === 2) {
+      ctx.fillStyle = '#00e5ff44';
+      ctx.font = '16px monospace';
+      ctx.fillText('RAXIO →', 420, 40);
     }
   }
 
-  drawOrbit();
-}
+  // ============================================================
+  // 5. UI-Updates
+  // ============================================================
+  function updateUI() {
+    document.getElementById('pumpDisplay').textContent = Engine.state.pump;
+    document.getElementById('jumpADisplay').textContent = Engine.state.cpuJumpA;
+    document.getElementById('jumpBDisplay').textContent = Engine.state.cpuJumpB;
+    document.getElementById('hitsDisplay').textContent = Engine.memory.hits;
+    document.getElementById('userImpulseDisplay').textContent = Engine.userImpulse();
 
-// ================================================================
-// 8. LOG
-// ================================================================
-function log(msg, type = '') {
-  const box = document.getElementById('logBox');
-  const time = new Date().toLocaleTimeString('de-DE');
-  const entry = document.createElement('div');
-  entry.className = 'entry';
-  entry.innerHTML = `<span class="time">[${time}]</span> <span class="msg ${type}">${msg}</span>`;
-  box.prepend(entry);
-  while (box.children.length > 40) box.lastChild?.remove();
-}
+    const logBox = document.getElementById('logBox');
+    const logs = Engine.memory.logs.slice(-30);
+    logBox.innerHTML = logs.map(l => `<div>${l}</div>`).join('');
+    logBox.scrollTop = logBox.scrollHeight;
 
-// ================================================================
-// 9. STEP / LOOP / RESET
-// ================================================================
-let loop = null;
-
-function step() {
-  stepEngine();
-  updateDisplay();
-  log(`Step ${state.step} · ${state.mode.toUpperCase()} · A81=${state.a81} · Achse=${state.axis}`, state.mode);
-}
-
-function toggleLoop() {
-  if (loop) {
-    clearInterval(loop);
-    loop = null;
-    document.getElementById('loopBtn').textContent = '▶ Loop';
-    log('Loop gestoppt.');
-  } else {
-    loop = setInterval(step, 500);
-    document.getElementById('loopBtn').textContent = '⏹ Loop';
-    log('Loop gestartet.');
+    // Achsenanzeige
+    const axleNames = ['neutral', 'LAXIO (links)', 'RAXIO (rechts)'];
+    document.getElementById('axleStateDisplay').textContent = axleNames[axleState];
   }
-}
 
-function resetSystem() {
-  if (loop) { clearInterval(loop); loop = null; document.getElementById('loopBtn').textContent = '▶ Loop'; }
-  state.pathIndex = 2;
-  state.a81 = 81;
-  state.axis = '-';
-  state.potenz = '-';
-  state.delta = 0;
-  state.zahnrad = 0;
-  state.step = 0;
-  state.lastTickTime = performance.now();
-  state.mode = 'stage';
-  state.energy = 0;
-  updateDisplay();
-  log('⟲ Reset.', 'error');
-}
+  // ============================================================
+  // 6. Event-Bindings
+  // ============================================================
+  document.addEventListener('DOMContentLoaded', () => {
 
-// ================================================================
-// 10. EVENTS & INIT
-// ================================================================
-document.getElementById('stepBtn').addEventListener('click', step);
-document.getElementById('loopBtn').addEventListener('click', toggleLoop);
-document.getElementById('stopBtn').addEventListener('click', () => {
-  if (loop) { clearInterval(loop); loop = null; document.getElementById('loopBtn').textContent = '▶ Loop'; log('Loop manuell gestoppt.'); }
-});
-document.getElementById('resetBtn').addEventListener('click', resetSystem);
+    // Pump-Slider
+    const slider = document.getElementById('pumpSlider');
+    slider.addEventListener('input', function() {
+      const val = parseInt(this.value);
+      Engine.pumpUp(val);
+      updateUI();
+      drawOrbit(0);
+    });
 
-updateDisplay();
-log('✅ RUN21 CORE aktiv · Zahnrad 0-3 STAGE, 4-7 AIR, 8-11 AIV.', 'stage');
+    // Engine starten
+    document.getElementById('runEngineBtn').addEventListener('click', function() {
+      const result = Engine.predictiveEngine();
+      Engine.log(`Engine fertig: A=${result.A}, B=${result.B}`);
+      updateUI();
+      drawOrbit(0);
+    });
+
+    // Reset
+    document.getElementById('resetBtn').addEventListener('click', function() {
+      Engine.reset();
+      updateUI();
+      drawOrbit(0);
+      doorOpen = false; dooActive = false;
+    });
+
+    // Moves
+    document.querySelectorAll('[data-move]').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const move = this.dataset.move;
+        document.getElementById('lastMoveDisplay').textContent = move;
+        Engine.log(`Move: ${move}`);
+        const idx = ['OI','IO','XI','IX'].indexOf(move) + 1;
+        drawOrbit(idx % 8);
+        updateUI();
+      });
+    });
+
+    // toggleAxle
+    document.getElementById('toggleAxleBtn').addEventListener('click', toggleAxle);
+
+    // RIR_KIT
+    document.getElementById('rirKitBtn').addEventListener('click', function() {
+      const input = prompt('Eingabe für RIR_KIT:', 'axiom');
+      if (input !== null) {
+        const result = RIR_KIT(input);
+        Engine.log(`RIR_KIT → ${JSON.stringify(result)}`);
+        updateUI();
+      }
+    });
+
+    // DOOR / DOO
+    document.getElementById('doorBtn').addEventListener('click', doorAction);
+    document.getElementById('dooBtn').addEventListener('click', dooAction);
+
+    // Initial
+    drawOrbit(0);
+    updateUI();
+    Engine.log('🟢 System bereit – goldene 6 geladen');
+    updateUI();
+  });
+
+  // ============================================================
+  // 7. Tastatur-Shortcuts
+  // ============================================================
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') document.getElementById('runEngineBtn').click();
+    if (e.key === 'r') document.getElementById('resetBtn').click();
+    if (e.key === 't') toggleAxle();
+    if (e.key === 'd') doorAction();
+    if (e.key === 'o') dooAction();
+  });
 </script>
-
 </body>
 </html>
