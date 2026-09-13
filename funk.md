@@ -1,0 +1,11 @@
+| p‑Nr | UI‑Name | System‑Name | Bedeutung |
+| --- | --- | --- | --- |
+| p0 | URSCHE | **CauseEnergy** | Startenergie |
+| p1 | IMPULS | **ImpulseForce** | Schubkraft |
+| p2 | VEKTOR | **VectorDirection** | Bewegungsrichtung |
+| p3 | ACHSE | **AxisLine** | Hauptbahn |
+| p4 | FREQ | **FrequencyRate** | Wiederholrate |
+| p5 | PHASE | **PhasePoint** | Zykluspunkt |
+| p6 | ROTATION | **RotationPower** | Drehkraft |
+| p7 | SPIN | **SpinField** | Eigenrotation |
+| p8 | WIRKUNG | **EffectOutput** | Manifestation |
