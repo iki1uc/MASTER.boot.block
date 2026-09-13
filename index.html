@@ -333,7 +333,10 @@
     const names = ['neutral', 'LAXIO (links)', 'RAXIO (rechts)'];
     Engine.log(`Achse → ${names[axleState]}`);
     updateUI();
-    drawOrbit(axleState);
+    // BUGFIX: showAxleOverlay=true wird jetzt explizit übergeben,
+    // damit die LAXIO/RAXIO-Anzeige NUR hier ausgelöst wird
+    // und nicht mehr zufällig durch Move-Buttons (OI/IO).
+    drawOrbit(axleState, true);
   }
 
   function doorAction() {
@@ -351,7 +354,12 @@
   // ============================================================
   // 4. Orbit Canvas (3‑9‑81 mit 8 Knoten)
   // ============================================================
-  function drawOrbit(highlight = 0) {
+  // BUGFIX: zweiter Parameter "showAxleOverlay" entkoppelt die
+  // LAXIO/RAXIO-Textanzeige von der reinen Knoten-Hervorhebung.
+  // Vorher nutzte drawOrbit(highlight) denselben Wert für beides,
+  // wodurch z.B. der Move-Button "OI" (highlight=1) fälschlich
+  // "← LAXIO" anzeigte, obwohl gar keine Achse umgeschaltet wurde.
+  function drawOrbit(highlight = 0, showAxleOverlay = false) {
     const canvas = document.getElementById('orbitCanvas');
     const ctx = canvas.getContext('2d');
     const w = canvas.width, h = canvas.height, cx = w/2, cy = h/2, r = 190;
@@ -418,12 +426,13 @@
       ctx.shadowBlur = 0;
     });
 
-    // Zusatzinfo bei Achsenwechsel
-    if (highlight === 1) {
+    // Zusatzinfo bei Achsenwechsel — nur wenn explizit angefordert
+    // (siehe Bugfix-Kommentar oben)
+    if (showAxleOverlay && axleState === 1) {
       ctx.fillStyle = '#ffd70044';
       ctx.font = '16px monospace';
       ctx.fillText('← LAXIO', 30, 40);
-    } else if (highlight === 2) {
+    } else if (showAxleOverlay && axleState === 2) {
       ctx.fillStyle = '#00e5ff44';
       ctx.font = '16px monospace';
       ctx.fillText('RAXIO →', 420, 40);
@@ -473,11 +482,19 @@
     });
 
     // Reset
+    // BUGFIX: vorher blieb der Slider visuell auf dem alten Wert
+    // stehen, obwohl Engine.state.pump auf 0 gesetzt wurde — Anzeige
+    // und Regler liefen auseinander. Jetzt werden Slider, Achse und
+    // letzter Move ebenfalls konsistent zurückgesetzt.
     document.getElementById('resetBtn').addEventListener('click', function() {
       Engine.reset();
+      slider.value = 0;
+      axleState = 0;
+      doorOpen = false;
+      dooActive = false;
+      document.getElementById('lastMoveDisplay').textContent = '—';
       updateUI();
       drawOrbit(0);
-      doorOpen = false; dooActive = false;
     });
 
     // Moves
@@ -487,6 +504,8 @@
         document.getElementById('lastMoveDisplay').textContent = move;
         Engine.log(`Move: ${move}`);
         const idx = ['OI','IO','XI','IX'].indexOf(move) + 1;
+        // showAxleOverlay bewusst weggelassen (default false) —
+        // Moves lösen keine LAXIO/RAXIO-Anzeige mehr aus.
         drawOrbit(idx % 8);
         updateUI();
       });
