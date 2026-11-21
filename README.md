@@ -15,7 +15,7 @@ Der **MASTER.boot.block** ist ein modularer, axiomischer Boot‑Stack, bestehend
 - `Pipeline9.js` – Final‑Dispatch
 - `ip6.js` – RFC‑8200‑konformes IPv6‑Modul
 
-## Architektur
+## Architektur 
 
 Der Boot‑Block arbeitet nach dem Prinzip:
 
